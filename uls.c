@@ -23,24 +23,24 @@ int do_ls_flags(const char *path, const char *name, struct stat *st,
 	unsigned flags, char *f_str, int f_len)
 {
 	int r;
-	if (flags & LS_LONG) {
-		/*
-		 * compose full path if a directory
-		 * name has been passed (not a '.')
-		 */
-		snprintf(f_str, f_len, "%s/%s", path, name);
-		r = stat(f_str, st);
-		if (-1 == r) {
-			printf("uls: %s: %s\n", f_str, strerror(errno));
-			errno = 0;
-			return -1;
-		}
-		printf("%zu\t", st->st_size);
-	} else {
-		/* switch a pointer to avoid copying */
-		f_str = (void *) name;
+
+	/*
+	 * compose full path if a directory
+	 * name has been passed (not a '.')
+	 */
+	snprintf(f_str, f_len, "%s/%s", path, name);
+	r = stat(f_str, st);
+	if (-1 == r) {
+		printf("uls: %s: %s\n", f_str, strerror(errno));
+		errno = 0;
+		return -1;
 	}
-	printf("%s\n", f_str);
+
+	if (flags & LS_LONG) {
+		printf("%zu\t", st->st_size);
+	}
+
+	printf("%s%s\n", f_str, (S_IFDIR == (st->st_mode & S_IFMT)) ? "/" : "");
 
 	return 0;
 }
