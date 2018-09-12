@@ -56,7 +56,7 @@ int do_ls(const char *path, unsigned flags)
 	if (b) {
 		struct stat *st = b;
 
-		/* FIXME round up to 16b boundary */
+		/* round up to 16b boundary */
 		int round_up = ((sizeof(*st) - 1)|15) + 1;
 
 		/* a memory buffer to store full path name */
