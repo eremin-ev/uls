@@ -10,4 +10,4 @@ tags: uls.c
 
 .PHONY:
 clean:
-	rm -vf uls
+	rm -vf uls tags
