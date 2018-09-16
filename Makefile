@@ -1,7 +1,9 @@
+CFLAGS = -O0
+
 all: uls tags
 
 uls: uls.c
-	$(CC) -O0 -Wall $< -o $@
+	$(CC) $(CFLAGS) -Wall $< -o $@
 
 tags: uls.c
 	ctags -R .

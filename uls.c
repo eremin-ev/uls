@@ -32,7 +32,6 @@ int do_ls_flags(const char *path, const char *name, struct stat *st,
 	r = stat(f_str, st);
 	if (-1 == r) {
 		printf("uls: %s: %s\n", f_str, strerror(errno));
-		errno = 0;
 		return -1;
 	}
 
@@ -65,18 +64,24 @@ int do_ls(const char *path, unsigned flags)
 
 		DIR *d = opendir(path);
 		if (d) {
-			errno = 0;
-			while ((e = readdir(d))) {
-				if (-1 == do_ls_flags(path, e->d_name,
-						st, flags, f_str, f_len)) {
-					r = -1;
+			while (1) {
+				errno = 0;
+				e = readdir(d);
+				if (e) {
+					if (-1 == do_ls_flags(path, e->d_name,
+							st, flags,
+							f_str, f_len)) {
+						r = -1;
+						break;
+					}
+				} else {
+					if (errno) {
+						printf("uls: %s: %s\n", path,
+							strerror(errno));
+						r = -1;
+					}
 					break;
 				}
-			}
-
-			if (errno) {
-				printf("uls: %s: %s\n", path, strerror(errno));
-				r = -1;
 			}
 
 			closedir(d);
