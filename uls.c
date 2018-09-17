@@ -25,11 +25,15 @@ int do_ls_flags(const char *path, const char *name, struct stat *st,
 	int r;
 
 	/*
-	 * compose full path if a directory
-	 * name has been passed (not a '.')
+	 * compose full path if a directory name has been passed (not a '.')
 	 */
-	snprintf(f_str, f_len, "%s/%s", path, name);
-	r = stat(f_str, st);
+	if ('.' != *path) {
+		snprintf(f_str, f_len, "%s/%s", path, name);
+	} else {
+		f_str = (char *) name;
+	}
+
+	r = lstat(f_str, st);
 	if (-1 == r) {
 		printf("uls: %s: %s\n", f_str, strerror(errno));
 		return -1;
